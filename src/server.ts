@@ -1,8 +1,26 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
 import users from "../data/users.json";
 
 const app = express();
 const PORT = 3000;
+
+const registeredUsers = new Map<string, string>([
+  ["alice", "1234"],
+  ["bob", "secret"],
+  ["charlie", "qwerty"],
+]);
+
+const sessions = new Map<string, string>();
+
+const tweets: {
+  id: number;
+  text: string;
+  author: string;
+}[] = [];
+
+app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Server läuft!");
@@ -40,4 +58,28 @@ app.get("/users", (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
+});
+
+app.post("/auth/login", (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  const storedPassword = registeredUsers.get(username);
+
+  if (!storedPassword || storedPassword !== password) {
+    return res.status(401).json({
+      error: "Invalid credentials",
+    });
+  }
+
+  const sessionId = crypto.randomUUID();
+
+  sessions.set(sessionId, username);
+
+  res.cookie("sessionId", sessionId, {
+    httpOnly: true,
+  });
+
+  res.json({
+    message: "Login succeeded",
+  });
 });
