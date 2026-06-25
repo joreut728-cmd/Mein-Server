@@ -24,3 +24,32 @@ export function getAllTweets() {
 export function getTweetById(id: number) {
   return tweets.find((tweet) => tweet.id === id);
 }
+
+export function createTweet(
+  text: string,
+  author: string
+) {
+  const tweet = {
+    id: tweets.length + 1,
+    text,
+    author,
+  };
+
+  tweets.push(tweet);
+
+  return tweet;
+}
+
+export function deleteTweet(id: number) {
+  const index = tweets.findIndex(
+    (tweet) => tweet.id === id
+  );
+
+  if (index === -1) {
+    return false;
+  }
+
+  tweets.splice(index, 1);
+
+  return true;
+}
