@@ -12,6 +12,14 @@ app.get("/", (req, res) => {
   res.send("Server läuft!");
 });
 
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(err);
+
+  res.status(500).json({
+    error: err.message || "Server error",
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
 });
