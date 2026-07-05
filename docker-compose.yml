@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: twitter-postgres
+    restart: always
+
+    environment:
+      POSTGRES_USER: stephan
+      POSTGRES_PASSWORD: geheim123
+      POSTGRES_DB: twitterdb
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
